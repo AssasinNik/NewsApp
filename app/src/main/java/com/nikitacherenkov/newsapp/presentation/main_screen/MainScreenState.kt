@@ -5,5 +5,6 @@ import com.nikitacherenkov.newsapp.domain.model.News
 data class MainScreenState(
     val isLoading: Boolean = false,
     val news : List<News> = emptyList(),
-    val error : String = ""
+    val error : String = "",
+    val date: String =""
 )

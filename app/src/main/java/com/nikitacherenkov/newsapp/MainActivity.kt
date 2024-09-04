@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.nikitacherenkov.newsapp.presentation.main_screen.components.GreetingPannel
 import com.nikitacherenkov.newsapp.presentation.ui.theme.NewsAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,6 +22,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsAppTheme {
                 Surface(modifier = Modifier.background(Color.White), color = Color.White) {
+                    GreetingPannel()
                 }
             }
         }
