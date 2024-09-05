@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nikitacherenkov.newsapp.R
 import coil.request.CachePolicy
+import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreenState
 import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreenViewModel
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
 import java.time.LocalDate
@@ -47,10 +48,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun GreetingPannel(){
-    LaunchedEffect(key1 = true) {
-        //viewmodel.getActualDate()
-    }
+fun GreetingPannel(
+    state: MainScreenState
+){
     Row (
         modifier = Modifier
             .padding(horizontal = 18.dp, vertical = 35.dp)
@@ -87,7 +87,7 @@ fun GreetingPannel(){
         Spacer(modifier = Modifier.width(5.dp))
         Column {
             Text(
-                text = "Привет\uD83D\uDC4B",
+                text = "Hello\uD83D\uDC4B",
                 style = TextStyle(
                     fontFamily = Poppins,
                     fontSize = 26.sp,
@@ -97,7 +97,7 @@ fun GreetingPannel(){
                 textAlign = TextAlign.Left
             )
             Text(
-                text = "Понедельник, 30 сентября",
+                text = state.date,
                 style = TextStyle(
                     fontFamily = Poppins,
                     fontSize = 17.sp,

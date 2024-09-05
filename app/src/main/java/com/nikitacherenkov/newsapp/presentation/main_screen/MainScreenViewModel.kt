@@ -23,32 +23,30 @@ class MainScreenViewModel @Inject constructor(
     private val _state = mutableStateOf(MainScreenState())
     val state : State<MainScreenState> = _state
 
-
-    fun getActualDate(){
+    fun getActualDate(): String{
         val today = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.getDefault())
         val formattedDate = today.format(formatter)
-        _state.value = MainScreenState(
-            date = formattedDate
-        )
+        return formattedDate
     }
 
     fun getNews(){
+        val date = getActualDate()
         useCase().onEach { result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = MainScreenState(
-                        news =  result.data ?: emptyList()
+                        news =  result.data ?: emptyList(), date = date
                     )
                 }
                 is Resource.Error -> {
                     _state.value = MainScreenState(
-                        error = result.message ?: "Unexpected error occured"
+                        error = result.message ?: "Unexpected error occured", date = date
                     )
                 }
                 is Resource.Loading -> {
                     _state.value = MainScreenState(
-                        isLoading = true
+                        isLoading = true, date = date
                     )
                 }
             }

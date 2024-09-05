@@ -10,9 +10,12 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreen
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.GreetingPannel
 import com.nikitacherenkov.newsapp.presentation.ui.theme.NewsAppTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsAppTheme {
                 Surface(modifier = Modifier.background(Color.White), color = Color.White) {
-                    GreetingPannel()
+                    MainScreen()
                 }
             }
         }

@@ -18,7 +18,7 @@ class GetNewsUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             val news = repository.getNews("ru", "top", API_KEY)
-            emit(Resource.Success(news[0].results.map { it.toNews() }))
+            emit(Resource.Success(news.results.map { it.toNews() }))
         } catch (e: HttpException){
             emit(Resource.Error(e.localizedMessage ?: "Unexpected error occured"))
         } catch (e: IOException){

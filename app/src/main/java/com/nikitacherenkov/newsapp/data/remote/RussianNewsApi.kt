@@ -11,5 +11,5 @@ interface RussianNewsApi {
         @Query("country") country: String,
         @Query("category") category: String,
         @Query("apikey") apikey: String
-    ): List<NewsDTO>
+    ): NewsDTO
 }
