@@ -53,7 +53,7 @@ fun GreetingPannel(
 ){
     Row (
         modifier = Modifier
-            .padding(horizontal = 18.dp, vertical = 35.dp)
+            .padding(start=18.dp, end=18.dp , top=70.dp, bottom = 40.dp)
             .fillMaxWidth()
     ){
         SubcomposeAsyncImage(
@@ -118,7 +118,7 @@ fun GreetingPannel(
                 onClick = {
 
                 },
-                modifier = Modifier.size(45.dp)
+                modifier = Modifier.size(55.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,

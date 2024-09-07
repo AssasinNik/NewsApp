@@ -35,10 +35,12 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.nikitacherenkov.newsapp.domain.model.News
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
+import com.nikitacherenkov.newsapp.utils.Constants.DEFAULT_IMAGE
 import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun TopNews(news: News) {
+    Log.d("News", "News: Title(${news.title}), ImageURL(${news.image_url})")
     Card(
         colors = CardDefaults.cardColors(Color(0xFFEEEEEE)),
         elevation = CardDefaults.cardElevation(15.dp),
@@ -46,82 +48,124 @@ fun TopNews(news: News) {
             .padding(10.dp)
             .height(300.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Основная картинка новости
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.weight(1f) // Задаем weight для Row
             ) {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(news.image_url)
-                        .dispatcher(Dispatchers.IO)
-                        .memoryCacheKey(news.image_url)
-                        .diskCacheKey(news.image_url)
-                        .diskCachePolicy(CachePolicy.ENABLED)
-                        .memoryCachePolicy(CachePolicy.ENABLED)
-                        .build(),
-                    contentDescription = news.image_url,
-                    contentScale = ContentScale.Crop,
-                    filterQuality = FilterQuality.None,
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                        .clip(RoundedCornerShape(10.dp)),
-                    loading = {
-                        CircularProgressIndicator(
-                            color = Color.Black,
-                            modifier = Modifier.size(24.dp)
+                // Основная картинка новости
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    if (news.image_url!="" && news.image_url!=null){
+                        SubcomposeAsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(news.image_url)
+                                .dispatcher(Dispatchers.IO)
+                                .memoryCacheKey(news.image_url)
+                                .diskCacheKey(news.image_url)
+                                .diskCachePolicy(CachePolicy.ENABLED)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
+                                .build(),
+                            contentDescription = news.image_url,
+                            contentScale = ContentScale.Crop,
+                            filterQuality = FilterQuality.None,
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(10.dp)),
+                            loading = {
+                                CircularProgressIndicator(
+                                    color = Color.Black,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         )
                     }
-                )
-
-                // Заголовок новости
-                news.title?.let {
-                    Text(
-                        text = it,
-                        style = TextStyle(
-                            fontFamily = Poppins,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Normal,
-                            color = Color.Black
-                        ),
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier.padding(10.dp)
+                    else{
+                        SubcomposeAsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(DEFAULT_IMAGE)
+                                .dispatcher(Dispatchers.IO)
+                                .memoryCacheKey(DEFAULT_IMAGE)
+                                .diskCacheKey(DEFAULT_IMAGE)
+                                .diskCachePolicy(CachePolicy.ENABLED)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
+                                .build(),
+                            contentDescription = DEFAULT_IMAGE,
+                            contentScale = ContentScale.Crop,
+                            filterQuality = FilterQuality.None,
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(10.dp)),
+                            loading = {
+                                CircularProgressIndicator(
+                                    color = Color.Black,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        )
+                    }
+                }
+                if (news.source_icon!="" && news.source_icon!=null){
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(news.source_icon)
+                            .dispatcher(Dispatchers.IO)
+                            .memoryCacheKey(news.source_icon)
+                            .diskCacheKey(news.source_icon)
+                            .diskCachePolicy(CachePolicy.ENABLED)
+                            .memoryCachePolicy(CachePolicy.ENABLED)
+                            .build(),
+                        contentDescription = news.source_icon,
+                        contentScale = ContentScale.Crop,
+                        filterQuality = FilterQuality.None,
+                        modifier = Modifier
+                            .size(70.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .align(Alignment.Top)
+                            .padding(10.dp),
+                        loading = {
+                            CircularProgressIndicator(
+                                color = Color.Black,                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     )
                 }
             }
-
-            // Иконка источника новости
-            news.source_icon?.let {
-                SubcomposeAsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(it)
-                        .dispatcher(Dispatchers.IO)
-                        .memoryCacheKey(it)
-                        .diskCacheKey(it)
-                        .diskCachePolicy(CachePolicy.ENABLED)
-                        .memoryCachePolicy(CachePolicy.ENABLED)
-                        .build(),
-                    contentDescription = it,
-                    contentScale = ContentScale.Crop,
-                    filterQuality = FilterQuality.None,
+            if (news.title!="" && news.title!=null){
+                Text(
+                    text = news.title,
+                    style = TextStyle(
+                        fontFamily = Poppins,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    ),
+                    textAlign = TextAlign.Left,
                     modifier = Modifier
-                        .size(70.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .align(Alignment.Top)
-                        .padding(10.dp),
-                    loading = {
-                        CircularProgressIndicator(
-                            color = Color.Black,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
+                        .padding(start = 10.dp, end =10.dp, bottom = 10.dp, top = 7.dp)
+                        .fillMaxWidth()
+                )
+            }
+            else{
+                Text(
+                    text = "There is no title for this news. Press to get more information",
+                    style = TextStyle(
+                        fontFamily = Poppins,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black
+                    ),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier
+                        .padding(start = 10.dp, end =10.dp, bottom = 10.dp, top = 7.dp)
+                        .fillMaxWidth()
                 )
             }
         }
