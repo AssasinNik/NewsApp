@@ -1,5 +1,6 @@
 package com.nikitacherenkov.newsapp.presentation.main_screen.components
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -16,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -35,23 +38,24 @@ import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
 import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun TopNews(
-    news: News
-){
+fun TopNews(news: News) {
     Card(
         colors = CardDefaults.cardColors(Color(0xFFEEEEEE)),
         elevation = CardDefaults.cardElevation(15.dp),
         modifier = Modifier
-            .width(350.dp)
             .padding(10.dp)
-            .height(250.dp)
+            .height(300.dp)
     ) {
         Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Column {
+            // Основная картинка новости
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start
+            ) {
                 SubcomposeAsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
                         .data(news.image_url)
@@ -66,49 +70,60 @@ fun TopNews(
                     filterQuality = FilterQuality.None,
                     modifier = Modifier
                         .height(200.dp)
-                        .width(170.dp)
+                        .fillMaxWidth()
+                        .padding(10.dp)
                         .clip(RoundedCornerShape(10.dp)),
                     loading = {
                         CircularProgressIndicator(
-                            color = Color.Black
+                            color = Color.Black,
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 )
-                if (news.title!=null){
+
+                // Заголовок новости
+                news.title?.let {
                     Text(
-                        text = news.title,
+                        text = it,
                         style = TextStyle(
                             fontFamily = Poppins,
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Normal,
                             color = Color.Black
                         ),
-                        textAlign = TextAlign.Left
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier.padding(10.dp)
                     )
                 }
             }
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(news.source_icon)
-                    .dispatcher(Dispatchers.IO)
-                    .memoryCacheKey(news.source_icon)
-                    .diskCacheKey(news.source_icon)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = news.source_icon,
-                contentScale = ContentScale.Crop,
-                filterQuality = FilterQuality.None,
-                modifier = Modifier
-                    .height(50.dp)
-                    .width(50.dp)
-                    .clip(RoundedCornerShape(10.dp)),
-                loading = {
-                    CircularProgressIndicator(
-                        color = Color.Black
-                    )
-                }
-            )
+
+            // Иконка источника новости
+            news.source_icon?.let {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(it)
+                        .dispatcher(Dispatchers.IO)
+                        .memoryCacheKey(it)
+                        .diskCacheKey(it)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build(),
+                    contentDescription = it,
+                    contentScale = ContentScale.Crop,
+                    filterQuality = FilterQuality.None,
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .align(Alignment.Top)
+                        .padding(10.dp),
+                    loading = {
+                        CircularProgressIndicator(
+                            color = Color.Black,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                )
+            }
         }
     }
 }
