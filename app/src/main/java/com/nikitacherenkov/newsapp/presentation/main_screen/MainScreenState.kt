@@ -5,6 +5,13 @@ import com.nikitacherenkov.newsapp.domain.model.News
 data class MainScreenState(
     val isLoading: Boolean = false,
     val news : List<News> = emptyList(),
+    val allNews: List<News> = emptyList(),
+    val categories: List<String> = listOf(
+        "top", "sports", "technology",
+        "business", "science", "entertainment",
+        "health", "world", "politics",
+        "environment","food"
+    ),
     val error : String = "",
     val date: String =""
 )

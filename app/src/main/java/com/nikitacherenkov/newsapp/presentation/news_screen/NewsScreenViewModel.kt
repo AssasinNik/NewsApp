@@ -24,7 +24,7 @@ class NewsScreenViewModel @Inject constructor(
     var news: News? = null
 
     private fun getNews(title: String){
-        useCase().onEach { result ->
+        useCase("").onEach { result ->
             when(result){
                 is Resource.Success -> {
                     if (result.data != null){

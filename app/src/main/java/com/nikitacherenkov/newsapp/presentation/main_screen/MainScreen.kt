@@ -1,30 +1,33 @@
 package com.nikitacherenkov.newsapp.presentation.main_screen
 
-import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -32,100 +35,199 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import com.nikitacherenkov.newsapp.presentation.main_screen.components.GreetingPannel
+import com.google.accompanist.flowlayout.FlowRow
+import com.nikitacherenkov.newsapp.presentation.main_screen.components.GreetingPanel
+import com.nikitacherenkov.newsapp.presentation.main_screen.components.NewsElement
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.TopNews
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    //navController: NavController,
     viewModel: MainScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.getNews()
     }
+
     val state = viewModel.state.value
     val news = state.news
-    val pagerState = rememberPagerState(initialPage = 2){
+    val allNews = state.allNews
+    val pagerState = rememberPagerState(initialPage = 2) {
         state.news.size
     }
-    val horizontalScrollState = rememberScrollState()
-    val categories: List<String> = listOf(
-        "top", "sports", "technology",
-        "business", "science", "entertainment",
-        "health", "world", "politics",
-        "environment","food"
-    )
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        GreetingPannel(state)
-        if (!news.isEmpty()) {
-            Text(
-                text = "Hot News",
-                style = TextStyle(
-                    fontFamily = Poppins,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                ),
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-            HorizontalPager(
-                contentPadding = PaddingValues(horizontal = 26.dp),
-                state = pagerState,
-                modifier = Modifier
-                    .height(300.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                ) { page ->
-                TopNews(news = news[page])
+
+    val listState = rememberLazyListState()
+    val showCategories by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 5
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState
+        ) {
+            item {
+                GreetingPanel(state)
             }
-            Text(
-                text = "Recent news",
-                style = TextStyle(
-                    fontFamily = Poppins,
-                    fontSize = 26.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                ),
-                textAlign = TextAlign.Left,
-                modifier = Modifier.padding(start = 10.dp)
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(18.dp)
-                    .horizontalScroll(horizontalScrollState)
-            ) {
-                categories.map { element->
-                    Box(
+
+            item {
+                Text(
+                    text = "Hot News",
+                    style = TextStyle(
+                        fontFamily = Poppins,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black
+                    ),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(start = 10.dp)
+                )
+            }
+
+            item {
+                if (news.isNotEmpty() && !state.isLoading) {
+                    HorizontalPager(
+                        contentPadding = PaddingValues(horizontal = 26.dp),
+                        state = pagerState,
                         modifier = Modifier
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(10.dp)
-                            )
-                            .border(
-                                width = 2.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(15.dp)
-                            )
-                            .padding(
-                                horizontal = 12.dp
-                            )
-                    ) {
-                        Text(
-                            text = element,
-                            fontSize = 16.sp,
-                            fontFamily = Poppins,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        )
+                            .height(300.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) { page ->
+                        TopNews(news = news[page])
                     }
-                    Spacer(modifier = Modifier.width(5.dp))
+                } else {
+                    Spacer(modifier = Modifier.height(40.dp))
+                    CircularProgressIndicator(
+                        color = Color.Black,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+
+            item {
+                Text(
+                    text = "Recent news",
+                    style = TextStyle(
+                        fontFamily = Poppins,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black
+                    ),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(start = 10.dp)
+                )
+            }
+
+            item {
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp),
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 8.dp
+                ) {
+                    state.categories.forEach { element ->
+                        if (element!="top"){
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .border(
+                                        width = 2.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(15.dp)
+                                    )
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = element,
+                                    fontSize = 16.sp,
+                                    fontFamily = Poppins,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (allNews.isNotEmpty() && !state.isLoading) {
+                items(allNews) { element ->
+                    NewsElement(news = element)
+                }
+                item {
+                    Spacer(modifier = Modifier.height(70.dp))
+                }
+            } else {
+                item {
+                    Spacer(modifier = Modifier.height(30.dp))
+                    CircularProgressIndicator(
+                        color = Color.Black,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+        }
+
+        AnimatedVisibility(
+            visible = showCategories,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .background(Color.White)
+                .shadow(2.dp)
+                .fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "News",
+                    style = TextStyle(
+                        fontFamily = Poppins,
+                        fontSize = 26.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black
+                    ),
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.padding(top=40.dp, start = 20.dp)
+                )
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(18.dp),
+                    mainAxisSpacing = 8.dp,
+                    crossAxisSpacing = 8.dp
+                ) {
+                    state.categories.forEach { element ->
+                        if (element!="top"){
+                            Box(
+                                modifier = Modifier
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(10.dp)
+                                    )
+                                    .border(
+                                        width = 2.dp,
+                                        color = Color.Black,
+                                        shape = RoundedCornerShape(15.dp)
+                                    )
+                                    .padding(horizontal = 12.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = element,
+                                    fontSize = 16.sp,
+                                    fontFamily = Poppins,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

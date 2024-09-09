@@ -48,7 +48,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun GreetingPannel(
+fun GreetingPanel(
     state: MainScreenState
 ){
     Row (
@@ -106,27 +106,6 @@ fun GreetingPannel(
                 ),
                 textAlign = TextAlign.Left
             )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        Box(
-            modifier = Modifier
-                .size(55.dp)
-                .background(color = Color(0xFFEEEEEE), shape = CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(
-                onClick = {
-
-                },
-                modifier = Modifier.size(55.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Search Screen",
-                    tint = Color.Black,
-                    modifier = Modifier.size(40.dp)
-                )
-            }
         }
     }
 }

@@ -14,10 +14,10 @@ import javax.inject.Inject
 class GetNewsUseCase @Inject constructor(
     private val repository: NewsRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<News>>> = flow {
+    operator fun invoke(category: String): Flow<Resource<List<News>>> = flow {
         try {
             emit(Resource.Loading())
-            val news = repository.getNews("ru", "top", API_KEY)
+            val news = repository.getNews("ru", category, API_KEY)
             emit(Resource.Success(news.results.map { it.toNews() }))
         } catch (e: HttpException){
             emit(Resource.Error(e.localizedMessage ?: "Unexpected error occured"))
