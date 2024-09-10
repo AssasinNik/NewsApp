@@ -90,4 +90,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-util:1.4.0")
 
     implementation("com.google.code.gson:gson:2.10.1")
+
 }

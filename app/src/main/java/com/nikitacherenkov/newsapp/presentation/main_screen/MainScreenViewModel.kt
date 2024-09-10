@@ -1,12 +1,15 @@
 package com.nikitacherenkov.newsapp.presentation.main_screen
 
+import android.net.Uri
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.State
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.nikitacherenkov.newsapp.domain.model.News
 import com.nikitacherenkov.newsapp.domain.use_case.get_news.GetNewsUseCase
 import com.nikitacherenkov.newsapp.utils.Resource
+import com.nikitacherenkov.newsapp.utils.Routes
 import com.nikitacherenkov.newsapp.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -45,7 +48,9 @@ class MainScreenViewModel @Inject constructor(
                 sendUiEvent(UiEvent.Navigate(""))
             }
             is MainScreenEvent.OnNewsClick -> {
-                sendUiEvent(UiEvent.Navigate(""))
+                val gson = Gson()
+                val newsJson = Uri.encode(gson.toJson(event.news))
+                sendUiEvent(UiEvent.Navigate("${Routes.NEWS_SCREEN}/$newsJson"))
             }
             is MainScreenEvent.onCategoryClick -> {
                 val currentCategories = _state.value.chosenCategories.toMutableList()
