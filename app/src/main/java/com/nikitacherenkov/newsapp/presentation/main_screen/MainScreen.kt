@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,14 +41,22 @@ import com.nikitacherenkov.newsapp.presentation.main_screen.components.GreetingP
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.NewsElement
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.TopNews
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
+import com.nikitacherenkov.newsapp.utils.UiEvent
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
+    onNavigate: (UiEvent.Navigate) -> Unit,
     viewModel: MainScreenViewModel = hiltViewModel()
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.getNews()
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.Navigate -> onNavigate(event)
+                else -> Unit
+            }
+        }
     }
 
     val state = viewModel.state.value
@@ -70,7 +79,7 @@ fun MainScreen(
             state = listState
         ) {
             item {
-                GreetingPanel(state)
+                GreetingPanel(state, viewModel)
             }
 
             item {
@@ -97,7 +106,9 @@ fun MainScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) { page ->
-                        TopNews(news = news[page])
+                        TopNews(news = news[page]) {
+                            viewModel.onEvent(MainScreenEvent.OnNewsClick(news[page]))
+                        }
                     }
                 } else {
                     Spacer(modifier = Modifier.height(40.dp))
@@ -131,11 +142,15 @@ fun MainScreen(
                     crossAxisSpacing = 8.dp
                 ) {
                     state.categories.forEach { element ->
-                        if (element!="top"){
+                        if (element != "top"){
+                            val isFavorite = state.chosenCategories.contains(element)
+                            val backgroundColor = if (isFavorite) Color.Black else Color.White
+                            val textColor = if (isFavorite) Color.White else Color.Black
+
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = Color.White,
+                                        color = backgroundColor,
                                         shape = RoundedCornerShape(10.dp)
                                     )
                                     .border(
@@ -144,13 +159,16 @@ fun MainScreen(
                                         shape = RoundedCornerShape(15.dp)
                                     )
                                     .padding(horizontal = 12.dp, vertical = 6.dp)
+                                    .clickable {
+                                        viewModel.onEvent(MainScreenEvent.onCategoryClick(element))
+                                    }
                             ) {
                                 Text(
                                     text = element,
                                     fontSize = 16.sp,
                                     fontFamily = Poppins,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color.Black
+                                    color = textColor
                                 )
                             }
                         }
@@ -159,8 +177,20 @@ fun MainScreen(
             }
 
             if (allNews.isNotEmpty() && !state.isLoading) {
-                items(allNews) { element ->
-                    NewsElement(news = element)
+                val filteredNews = allNews.filter { news ->
+                    news.categories.any { category ->
+                        state.chosenCategories.contains(category)
+                    }
+                }
+                if (filteredNews.isEmpty()){
+                    items(allNews) { element ->
+                        NewsElement(news = element)
+                    }
+                }
+                else{
+                    items(filteredNews) { element ->
+                        NewsElement(news = element)
+                    }
                 }
                 item {
                     Spacer(modifier = Modifier.height(70.dp))
@@ -194,7 +224,7 @@ fun MainScreen(
                         color = Color.Black
                     ),
                     textAlign = TextAlign.Left,
-                    modifier = Modifier.padding(top=40.dp, start = 20.dp)
+                    modifier = Modifier.padding(top = 40.dp, start = 20.dp)
                 )
                 FlowRow(
                     modifier = Modifier
@@ -204,11 +234,15 @@ fun MainScreen(
                     crossAxisSpacing = 8.dp
                 ) {
                     state.categories.forEach { element ->
-                        if (element!="top"){
+                        if (element != "top"){
+                            val isFavorite = state.chosenCategories.contains(element)
+                            val backgroundColor = if (isFavorite) Color.Black else Color.White
+                            val textColor = if (isFavorite) Color.White else Color.Black
+
                             Box(
                                 modifier = Modifier
                                     .background(
-                                        color = Color.White,
+                                        color = backgroundColor,
                                         shape = RoundedCornerShape(10.dp)
                                     )
                                     .border(
@@ -217,13 +251,16 @@ fun MainScreen(
                                         shape = RoundedCornerShape(15.dp)
                                     )
                                     .padding(horizontal = 12.dp, vertical = 6.dp)
+                                    .clickable {
+                                        viewModel.onEvent(MainScreenEvent.onCategoryClick(element))
+                                    }
                             ) {
                                 Text(
                                     text = element,
                                     fontSize = 16.sp,
                                     fontFamily = Poppins,
                                     fontWeight = FontWeight.Medium,
-                                    color = Color.Black
+                                    color = textColor
                                 )
                             }
                         }

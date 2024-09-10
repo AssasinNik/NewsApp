@@ -24,7 +24,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewsAppTheme {
                 Surface(modifier = Modifier.background(Color.White), color = Color.White) {
-                    MainScreen()
+                    MainScreen(
+                        onNavigate = {
+
+                        }
+                    )
                 }
             }
         }

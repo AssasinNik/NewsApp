@@ -7,11 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.nikitacherenkov.newsapp.domain.model.News
 import com.nikitacherenkov.newsapp.domain.use_case.get_news.GetNewsUseCase
 import com.nikitacherenkov.newsapp.utils.Resource
+import com.nikitacherenkov.newsapp.utils.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.toList
 import retrofit2.HttpException
 import java.time.LocalDate
@@ -26,6 +29,9 @@ class MainScreenViewModel @Inject constructor(
     private val _state = mutableStateOf(MainScreenState())
     val state: State<MainScreenState> = _state
 
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
+
     private fun getActualDate(): String {
         val today = LocalDate.now()
         val formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM", Locale.getDefault())
@@ -33,11 +39,35 @@ class MainScreenViewModel @Inject constructor(
         return formattedDate
     }
 
+    fun onEvent(event: MainScreenEvent){
+        when(event){
+            is MainScreenEvent.OnUserAvatarClick -> {
+                sendUiEvent(UiEvent.Navigate(""))
+            }
+            is MainScreenEvent.OnNewsClick -> {
+                sendUiEvent(UiEvent.Navigate(""))
+            }
+            is MainScreenEvent.onCategoryClick -> {
+                val currentCategories = _state.value.chosenCategories.toMutableList()
+
+                if (currentCategories.contains(event.category)) {
+                    currentCategories.remove(event.category)
+                } else {
+                    currentCategories.add(event.category)
+                }
+
+                _state.value = _state.value.copy(
+                    chosenCategories = currentCategories
+                )
+            }
+        }
+    }
+
     fun getNews() {
         val date = getActualDate()
         viewModelScope.launch {
-            val allNews = mutableListOf<News>()  // Временное хранение всех новостей
-            val topNews = mutableListOf<News>()  // Временное хранение топ-новостей
+            val allNews = mutableListOf<News>()
+            val topNews = mutableListOf<News>()
 
             try {
                 val results = _state.value.categories.map { genre ->
@@ -73,7 +103,6 @@ class MainScreenViewModel @Inject constructor(
                                 }
                             }.toList()
                         } catch (e: HttpException) {
-                            // Если произошло исключение 429 или любое другое
                             if (e.code() == 429) {
                                 _state.value = _state.value.copy(
                                     error = "Превышен лимит запросов. Пожалуйста, попробуйте позже.",
@@ -89,8 +118,6 @@ class MainScreenViewModel @Inject constructor(
                     }
                 }
                 results.awaitAll()
-
-                // Обновляем состояние только если новости были успешно загружены
                 _state.value = _state.value.copy(
                     news = if (topNews.isEmpty()) emptyList() else topNews,
                     allNews = if (allNews.isEmpty()) emptyList() else allNews,
@@ -103,6 +130,12 @@ class MainScreenViewModel @Inject constructor(
                     isLoading = false
                 )
             }
+        }
+    }
+
+    private fun sendUiEvent(event: UiEvent) {
+        viewModelScope.launch {
+            _uiEvent.send(event)
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.nikitacherenkov.newsapp.domain.model
 
 data class News(
-    val category: List<String>?,
+    val categories: List<String>,
     val description: String?,
     val image_url: String?,
     val keywords: List<String>?,

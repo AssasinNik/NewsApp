@@ -32,7 +32,7 @@ data class ResultDTO(
 
 fun ResultDTO.toNews(): News{
     return News(
-        category = category,
+        categories = category,
         description = description,
         image_url = image_url,
         keywords = keywords,

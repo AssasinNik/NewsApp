@@ -10,8 +10,9 @@ data class MainScreenState(
         "top", "sports", "technology",
         "business", "science", "entertainment",
         "health", "world", "politics",
-        "environment","food"
+        "environment"
     ),
+    var chosenCategories: List<String> = emptyList(),
     val error : String = "",
     val date: String =""
 )

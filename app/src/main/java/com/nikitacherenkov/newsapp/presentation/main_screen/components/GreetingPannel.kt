@@ -2,6 +2,7 @@ package com.nikitacherenkov.newsapp.presentation.main_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nikitacherenkov.newsapp.R
 import coil.request.CachePolicy
+import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreenEvent
 import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreenState
 import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreenViewModel
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
@@ -49,7 +51,8 @@ import java.util.Locale
 
 @Composable
 fun GreetingPanel(
-    state: MainScreenState
+    state: MainScreenState,
+    viewModel: MainScreenViewModel
 ){
     Row (
         modifier = Modifier
@@ -77,7 +80,11 @@ fun GreetingPanel(
                     color = Color.Black,
                     shape = RoundedCornerShape(10.dp)
                 )
-                .align(Alignment.CenterVertically),
+                .align(Alignment.CenterVertically)
+                .clickable {
+                    viewModel.onEvent(MainScreenEvent.OnUserAvatarClick)
+                }
+            ,
             loading = {
                 CircularProgressIndicator(
                     color = Color.Black
