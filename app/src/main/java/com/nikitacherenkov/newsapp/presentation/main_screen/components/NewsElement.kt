@@ -36,14 +36,15 @@ import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun NewsElement(
-    news: News
+    news: News,
+    onTap:() -> Unit
 ){
     Row (
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 10.dp, top = 10.dp)
             .clickable {
-
+                onTap()
             }
     ){
         if (news.source_icon!="" || news.source_icon!=null){

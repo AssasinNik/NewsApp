@@ -84,7 +84,7 @@ fun MainScreen(
 
             item {
                 Text(
-                    text = "Hot News",
+                    text = "Популярно",
                     style = TextStyle(
                         fontFamily = Poppins,
                         fontSize = 26.sp,
@@ -121,7 +121,7 @@ fun MainScreen(
 
             item {
                 Text(
-                    text = "Recent news",
+                    text = "Новости",
                     style = TextStyle(
                         fontFamily = Poppins,
                         fontSize = 26.sp,
@@ -184,12 +184,16 @@ fun MainScreen(
                 }
                 if (filteredNews.isEmpty()){
                     items(allNews) { element ->
-                        NewsElement(news = element)
+                        NewsElement(news = element){
+                            viewModel.onEvent(MainScreenEvent.OnNewsClick(element))
+                        }
                     }
                 }
                 else{
                     items(filteredNews) { element ->
-                        NewsElement(news = element)
+                        NewsElement(news = element){
+                            viewModel.onEvent(MainScreenEvent.OnNewsClick(element))
+                        }
                     }
                 }
                 item {

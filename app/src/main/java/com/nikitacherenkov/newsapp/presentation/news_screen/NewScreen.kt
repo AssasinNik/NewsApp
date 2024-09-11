@@ -129,20 +129,38 @@ fun NewsScreen(
                         .align(Alignment.CenterHorizontally)
                 )
                 Spacer(modifier = Modifier.size(10.dp))
-                Text(
-                    text = news.description.toString(),
-                    style = TextStyle(
-                        fontFamily = Poppins,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.Black,
-                        fontSize = 20.sp
-                    ),
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, top = 8.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
+                if(news.description!=null || news.description!=""){
+                    Text(
+                        text = news.description.toString(),
+                        style = TextStyle(
+                            fontFamily = Poppins,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black,
+                            fontSize = 20.sp
+                        ),
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+                else{
+                    Text(
+                        text = "У данно новости нету описания. Сожалеем, что так получилось",
+                        style = TextStyle(
+                            fontFamily = Poppins,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black,
+                            fontSize = 20.sp
+                        ),
+                        textAlign = TextAlign.Left,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, top = 8.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }

@@ -94,7 +94,7 @@ fun GreetingPanel(
         Spacer(modifier = Modifier.width(5.dp))
         Column {
             Text(
-                text = "Hello\uD83D\uDC4B",
+                text = "Привет\uD83D\uDC4B",
                 style = TextStyle(
                     fontFamily = Poppins,
                     fontSize = 26.sp,
