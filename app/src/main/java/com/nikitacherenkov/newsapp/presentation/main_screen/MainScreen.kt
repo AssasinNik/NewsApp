@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +40,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.flowlayout.FlowRow
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.GreetingPanel
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.NewsElement
+import com.nikitacherenkov.newsapp.presentation.main_screen.components.ShimmerNews
 import com.nikitacherenkov.newsapp.presentation.main_screen.components.TopNews
+import com.nikitacherenkov.newsapp.presentation.reusable_components.ShimmerCard
+import com.nikitacherenkov.newsapp.presentation.reusable_components.ShimmerSource
+import com.nikitacherenkov.newsapp.presentation.reusable_components.ShimmerText
+import com.nikitacherenkov.newsapp.presentation.ui.theme.BorderColor
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
 import com.nikitacherenkov.newsapp.utils.UiEvent
 
@@ -110,11 +116,7 @@ fun MainScreen(
                         }
                     }
                 } else {
-                    Spacer(modifier = Modifier.height(40.dp))
-                    CircularProgressIndicator(
-                        color = Color.Black,
-                        modifier = Modifier.padding(10.dp)
-                    )
+                    ShimmerCard()
                 }
             }
 
@@ -199,12 +201,8 @@ fun MainScreen(
                     Spacer(modifier = Modifier.height(70.dp))
                 }
             } else {
-                item {
-                    Spacer(modifier = Modifier.height(30.dp))
-                    CircularProgressIndicator(
-                        color = Color.Black,
-                        modifier = Modifier.padding(10.dp)
-                    )
+                items(2) {
+                    ShimmerNews()
                 }
             }
         }

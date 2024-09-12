@@ -24,8 +24,6 @@ import javax.inject.Inject
 class NewsScreenViewModel @Inject constructor(
     private val useCase: GetNewsUseCase
 ): ViewModel(){
-    private val _state = mutableStateOf(NewsScreenState())
-    val state : State<NewsScreenState> = _state
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()

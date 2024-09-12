@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -77,70 +78,87 @@ class MainScreenViewModel @Inject constructor(
         viewModelScope.launch {
             val allNews = mutableListOf<News>()
             val topNews = mutableListOf<News>()
+            var retryCount = 0
+            val maxRetries = 6
 
-            try {
-                val results = _state.value.categories.map { genre ->
-                    async {
-                        try {
-                            useCase(genre).onEach { result ->
-                                when (result) {
-                                    is Resource.Success -> {
-                                        val newsList = result.data ?: emptyList()
-                                        if (genre == "top") {
-                                            topNews.addAll(newsList)
-                                        } else {
-                                            allNews.addAll(newsList)
+            while (retryCount < maxRetries) {
+                try {
+                    val results = _state.value.categories.map { genre ->
+                        async {
+                            try {
+                                useCase(genre).onEach { result ->
+                                    when (result) {
+                                        is Resource.Success -> {
+                                            val newsList = result.data ?: emptyList()
+                                            if (genre == "top") {
+                                                topNews.addAll(newsList)
+                                            } else {
+                                                allNews.addAll(newsList)
+                                            }
+                                            _state.value = _state.value.copy(
+                                                isLoading = false,
+                                                date = date
+                                            )
                                         }
-                                        _state.value = _state.value.copy(
-                                            isLoading = false,
-                                            date = date
-                                        )
+                                        is Resource.Error -> {
+                                            _state.value = _state.value.copy(
+                                                error = result.message ?: "Unexpected error occurred",
+                                                date = date,
+                                                isLoading = false
+                                            )
+                                        }
+                                        is Resource.Loading -> {
+                                            _state.value = _state.value.copy(
+                                                isLoading = true,
+                                                date = date
+                                            )
+                                        }
                                     }
-                                    is Resource.Error -> {
-                                        _state.value = _state.value.copy(
-                                            error = result.message ?: "Unexpected error occurred",
-                                            date = date,
-                                            isLoading = false
-                                        )
-                                    }
-                                    is Resource.Loading -> {
-                                        _state.value = _state.value.copy(
-                                            isLoading = true,
-                                            date = date
-                                        )
-                                    }
+                                }.toList()
+                            } catch (e: HttpException) {
+                                if (e.code() == 429) {
+                                    _state.value = _state.value.copy(
+                                        error = "Превышен лимит запросов. Пожалуйста, попробуйте позже.",
+                                        isLoading = false
+                                    )
+                                } else {
+                                    _state.value = _state.value.copy(
+                                        error = "Ошибка сети: ${e.localizedMessage}",
+                                        isLoading = false
+                                    )
                                 }
-                            }.toList()
-                        } catch (e: HttpException) {
-                            if (e.code() == 429) {
-                                _state.value = _state.value.copy(
-                                    error = "Превышен лимит запросов. Пожалуйста, попробуйте позже.",
-                                    isLoading = false
-                                )
-                            } else {
-                                _state.value = _state.value.copy(
-                                    error = "Ошибка сети: ${e.localizedMessage}",
-                                    isLoading = false
-                                )
                             }
                         }
                     }
-                }
-                results.awaitAll()
+                    results.awaitAll()
+                    _state.value = _state.value.copy(
+                        news = if (topNews.isEmpty()) emptyList() else topNews,
+                        allNews = if (allNews.isEmpty()) emptyList() else allNews,
+                        date = date,
+                        isLoading = false
+                    )
+                    isNewsLoaded = true
+                    break
+                } catch (e: Exception) {
+                    _state.value = _state.value.copy(
+                        error = "Ошибка при загрузке новостей: ${e.localizedMessage}",
+                        isLoading = false
+                    )
+                    retryCount++
 
-                // Set state with fetched news and mark them as loaded
-                _state.value = _state.value.copy(
-                    news = if (topNews.isEmpty()) emptyList() else topNews,
-                    allNews = if (allNews.isEmpty()) emptyList() else allNews,
-                    date = date,
-                    isLoading = false
-                )
-                isNewsLoaded = true // News is now cached
-            } catch (e: Exception) {
-                _state.value = _state.value.copy(
-                    error = "Ошибка при загрузке новостей: ${e.localizedMessage}",
-                    isLoading = false
-                )
+                    if (retryCount < maxRetries) {
+                        _state.value = _state.value.copy(
+                            error = "Попытка повторного запроса через 30 секунд...",
+                            isLoading = true
+                        )
+                        delay(90_000)
+                    } else {
+                        _state.value = _state.value.copy(
+                            error = "Не удалось загрузить новости после нескольких попыток",
+                            isLoading = false
+                        )
+                    }
+                }
             }
         }
     }

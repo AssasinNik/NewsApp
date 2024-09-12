@@ -1,12 +1,8 @@
 package com.nikitacherenkov.newsapp.presentation.news_screen
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,11 +29,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -50,10 +44,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.nikitacherenkov.newsapp.R
 import com.nikitacherenkov.newsapp.domain.model.News
-import com.nikitacherenkov.newsapp.presentation.main_screen.MainScreenEvent
-import com.nikitacherenkov.newsapp.presentation.ui.theme.BorderColor
+import com.nikitacherenkov.newsapp.presentation.reusable_components.ShimmerImage
 import com.nikitacherenkov.newsapp.presentation.ui.theme.InfoColor
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
 import com.nikitacherenkov.newsapp.utils.UiEvent
@@ -158,10 +150,7 @@ fun NewsScreen(
                     .padding(10.dp)
                     .clip(RoundedCornerShape(10.dp)),
                 loading = {
-                    CircularProgressIndicator(
-                        color = Color.Black,
-                        modifier = Modifier.size(24.dp)
-                    )
+                    ShimmerImage( modifier = Modifier)
                 }
             )
         }

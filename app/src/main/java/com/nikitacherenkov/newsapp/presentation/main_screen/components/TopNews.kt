@@ -31,6 +31,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.nikitacherenkov.newsapp.domain.model.News
+import com.nikitacherenkov.newsapp.presentation.reusable_components.ShimmerImage
 import com.nikitacherenkov.newsapp.presentation.ui.theme.Poppins
 import com.nikitacherenkov.newsapp.utils.Constants.DEFAULT_IMAGE
 import kotlinx.coroutines.Dispatchers
@@ -77,10 +78,7 @@ fun TopNews(news: News , onTap: () -> Unit,) {
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp)),
                             loading = {
-                                CircularProgressIndicator(
-                                    color = Color.Black,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                                ShimmerImage(modifier = Modifier)
                             }
                         )
                     }
@@ -103,10 +101,7 @@ fun TopNews(news: News , onTap: () -> Unit,) {
                                 .padding(10.dp)
                                 .clip(RoundedCornerShape(10.dp)),
                             loading = {
-                                CircularProgressIndicator(
-                                    color = Color.Black,
-                                    modifier = Modifier.size(24.dp)
-                                )
+                                ShimmerImage(modifier = Modifier)
                             }
                         )
                     }
@@ -149,7 +144,7 @@ fun TopNews(news: News , onTap: () -> Unit,) {
                     ),
                     textAlign = TextAlign.Left,
                     modifier = Modifier
-                        .padding(start = 10.dp, end =10.dp, bottom = 10.dp, top = 7.dp)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 7.dp)
                         .fillMaxWidth()
                 )
             }
@@ -164,7 +159,7 @@ fun TopNews(news: News , onTap: () -> Unit,) {
                     ),
                     textAlign = TextAlign.Left,
                     modifier = Modifier
-                        .padding(start = 10.dp, end =10.dp, bottom = 10.dp, top = 7.dp)
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp, top = 7.dp)
                         .fillMaxWidth()
                 )
             }
