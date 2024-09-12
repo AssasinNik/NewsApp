@@ -56,7 +56,7 @@ fun GreetingPanel(
 ){
     Row (
         modifier = Modifier
-            .padding(start=18.dp, end=18.dp , top=70.dp, bottom = 40.dp)
+            .padding(start=18.dp, end=18.dp , top=70.dp, bottom = 25.dp)
             .fillMaxWidth()
     ){
         SubcomposeAsyncImage(

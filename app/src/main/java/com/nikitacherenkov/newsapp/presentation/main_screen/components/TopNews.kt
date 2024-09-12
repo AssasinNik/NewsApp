@@ -155,7 +155,7 @@ fun TopNews(news: News , onTap: () -> Unit,) {
             }
             else{
                 Text(
-                    text = "There is no title for this news. Press to get more information",
+                    text = "У данной новости нет названия",
                     style = TextStyle(
                         fontFamily = Poppins,
                         fontSize = 17.sp,

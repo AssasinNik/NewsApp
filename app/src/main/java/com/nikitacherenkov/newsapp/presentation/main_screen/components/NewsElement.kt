@@ -47,7 +47,7 @@ fun NewsElement(
                 onTap()
             }
     ){
-        if (news.source_icon!="" || news.source_icon!=null){
+        if (news.source_icon!="" && news.source_icon!=null){
             SubcomposeAsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(news.source_icon)

@@ -81,7 +81,6 @@ fun MainScreen(
             item {
                 GreetingPanel(state, viewModel)
             }
-
             item {
                 Text(
                     text = "Популярно",

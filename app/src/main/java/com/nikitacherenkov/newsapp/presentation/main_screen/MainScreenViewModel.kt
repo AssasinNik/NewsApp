@@ -68,7 +68,11 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    private var isNewsLoaded = false
+
     fun getNews() {
+        if (isNewsLoaded) return
+
         val date = getActualDate()
         viewModelScope.launch {
             val allNews = mutableListOf<News>()
@@ -123,12 +127,15 @@ class MainScreenViewModel @Inject constructor(
                     }
                 }
                 results.awaitAll()
+
+                // Set state with fetched news and mark them as loaded
                 _state.value = _state.value.copy(
                     news = if (topNews.isEmpty()) emptyList() else topNews,
                     allNews = if (allNews.isEmpty()) emptyList() else allNews,
                     date = date,
                     isLoading = false
                 )
+                isNewsLoaded = true // News is now cached
             } catch (e: Exception) {
                 _state.value = _state.value.copy(
                     error = "Ошибка при загрузке новостей: ${e.localizedMessage}",
