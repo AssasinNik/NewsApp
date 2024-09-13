@@ -41,7 +41,7 @@ fun ShimmerCard(){
         colors = CardDefaults.cardColors(Color(0xFFEEEEEE)),
         elevation = CardDefaults.cardElevation(15.dp),
         modifier = Modifier
-            .padding(10.dp)
+            .padding(20.dp)
             .height(300.dp)
     ){
         Column(modifier = Modifier.fillMaxSize()) {

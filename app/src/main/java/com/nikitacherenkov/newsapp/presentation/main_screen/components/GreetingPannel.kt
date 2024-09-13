@@ -72,8 +72,8 @@ fun GreetingPanel(
             contentScale = ContentScale.Crop,
             filterQuality = FilterQuality.None,
             modifier = Modifier
-                .height(100.dp)
-                .width(90.dp)
+                .height(90.dp)
+                .width(80.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .border(
                     width = 2.dp,
