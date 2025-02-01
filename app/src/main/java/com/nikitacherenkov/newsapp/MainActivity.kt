@@ -1,5 +1,6 @@
 package com.nikitacherenkov.newsapp
 
+import StagedLoginScreen
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -36,6 +37,8 @@ class MainActivity : ComponentActivity() {
                 Surface(modifier = Modifier.background(Color.White), color = Color.White) {
                     val navController = rememberNavController()
                     val gson = Gson()
+                    StagedLoginScreen(){}
+                    /*
                     NavHost(
                         navController = navController,
                         startDestination = Routes.MAIN_SCREEN,
@@ -64,7 +67,7 @@ class MainActivity : ComponentActivity() {
                                 onPopBackStack = { navController.popBackStack() }
                             )
                         }
-                    }
+                    }*/
                 }
             }
         }
